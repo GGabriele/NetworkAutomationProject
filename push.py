@@ -18,10 +18,10 @@ def _cisco_push(user, password, ip, command_list, device_type="cisco_ios"):
 	try:
 		net_connect = ConnectHandler(**device)
 		net_connect.enable()
-		command_list.append(SHOW_RUN)
-		output = net_connect.send_config_set(command_list)
-		time.sleep(5)
+		net_connect.send_config_set(command_list)
+		output = net_connect.send_command_expect(SHOW_RUN)
 		print "Configuration pushed!"
+		return output
 	except:
 		print "ERROR! Something wrong happened during the configuration process."
 		return 0
