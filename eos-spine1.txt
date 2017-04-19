@@ -24,7 +24,7 @@ vrf definition MANAGEMENT
 interface Ethernet1
 !
 interface Ethernet2
-!
+  description DEMO!!!
 interface Ethernet3
 !
 interface Ethernet4
