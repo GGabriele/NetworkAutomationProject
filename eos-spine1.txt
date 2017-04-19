@@ -1,0 +1,58 @@
+! Command: show running-config
+! device: eos-spine1 (vEOS, EOS-4.15.2F)
+!
+! boot system flash:/vEOS-4.15.2F.swi
+!
+transceiver qsfp default-mode 4x10G
+!
+hostname eos-spine1
+ip domain-name ntc.com
+!
+snmp-server community networktocode ro
+!
+spanning-tree mode mstp
+!
+aaa authorization exec default local
+!
+no aaa root
+!
+username ntc privilege 15 secret 5 $1$KergS3bl$RFVho/GXf.3bQHhOCbeky1
+!
+vrf definition MANAGEMENT
+   rd 100:100
+!
+interface Ethernet1
+!
+interface Ethernet2
+!
+interface Ethernet3
+!
+interface Ethernet4
+!
+interface Ethernet5
+!
+interface Ethernet6
+!
+interface Ethernet7
+!
+interface Management1
+   vrf forwarding MANAGEMENT
+   ip address 10.0.0.11/24
+!
+ip route vrf MANAGEMENT 0.0.0.0/0 10.0.0.2
+!
+ip routing
+ip routing vrf MANAGEMENT
+!
+management api http-commands
+   protocol http
+   no shutdown
+   vrf MANAGEMENT
+      no shutdown
+!
+management ssh
+   vrf MANAGEMENT
+      no shutdown
+!
+!
+end
