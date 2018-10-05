@@ -1,5 +1,6 @@
 # NetworkAutomationProject
 
+
 This is a Network Automation Project I'm working on to make some practice with Python and DB interaction.
 
 # Executing the project
