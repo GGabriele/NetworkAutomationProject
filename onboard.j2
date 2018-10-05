@@ -1,0 +1,124 @@
+diagram:
+  fill: "#F0F0F0"
+  columns: 12
+  rows: 7
+  gridLines: false
+  aspectRatio: "12:7"
+title:
+  author: "ntc"
+  logoUrl: "https://www.societegenerale.com/sites/default/files/styles/logo_header/public/logohome/en/logo-top_0.png?itok=nC8Ju2vl"
+  color: black
+  company: "SocGen"
+  heightPercentage: 6
+  logoFill: black
+  stroke: black
+  text: "{{ vpn_param['client_name'] }} Connectivity to SG PRM"
+  subText: "Connection Type: Site-to-Site VPN"
+  type: "bar"
+defaults: &defaults
+  color: "darkblue"
+  fill: "ivory"
+  iconFamily: "azureEnterprise"
+  iconFill: "white"
+  iconStroke: "none"
+  stroke: "lightblue"
+  
+hiddenicon: &hiddenicon
+  color: "#708090"
+  fill: "none"
+  iconFamily: "azureEnterprise"
+  iconFill: "none"
+  iconStroke: "gray"
+  stroke: "none"
+  
+icons:
+  client1-vpn-peer: {<<: *hiddenicon, x: 1, y: 6, icon: "firewall",  
+  text: "VPN PEER \n\n {{ vpn_param['ip_address']['primary']['tunnel']['client'] }}", iconFill: "#4080B0"}
+  client1-server: {<<: *hiddenicon, x: 0, y: 6 , icon: "servergeneric",
+  iconFill: "#4080B0", text: "{{ vpn_param['policies']['from_socgen'][0]['dest_addr']['primary'][0]['real'] }}"}
+  client2-vpn-peer: {<<: *hiddenicon, x: 1, y: 4, icon: "firewall",
+  iconFill: "#90C830", text: "VPN PEER - {{ vpn_param['ip_address']['secondary']['tunnel']['client'] }}"}
+  client2-server: {<<: *hiddenicon, x: 0, y: 4, icon: "servergeneric", 
+  text: "{{ vpn_param['policies']['from_socgen'][0]['dest_addr']['secondary'][0]['real'] }}" ,iconFill: "#90C830"}
+  cloud1: {<<: *hiddenicon, x: 2, y: 6, icon: "cloud", color: "black", 
+  text: "Internet", iconFill: "white", iconStroke: "darkblue" }
+  sg-vpn-peer1-fw1: {<<: *hiddenicon, x: 4, y: 6, icon: "firewall",
+  iconFill: "#F0A060", text: "VPN PEER \n\n {{ vpn_param['ip_address']['primary']['tunnel']['socgen'] }}"}
+  sg-vpn-peer1-rtr1: {<<: *hiddenicon, x: 5, y: 6, icon: "gateway",
+  iconFill: "#4068E0", text: "RTR"}
+  sg-vpn-peer1-fw2: {<<: *hiddenicon, x: 6, y: 6, icon: "firewall",
+  iconFill: "#F08080", text: "FW"}
+  sg-vpn-peer2-fw1: {<<: *hiddenicon, x: 4, y: 4, icon: "firewall",
+  iconFill: "#F0A060", text: "VPN PEER \n\n {{ vpn_param['ip_address']['secondary']['tunnel']['socgen'] }}" }
+  sg-vpn-peer2-rtr1: {<<: *hiddenicon, x: 5, y: 4, icon: "gateway",
+  iconFill: "#4068E0", text: "RTR"}
+  sg-vpn-peer2-fw2: {<<: *hiddenicon, x: 6, y: 4, icon: "firewall",
+  iconFill: "#F08080", text: "FW"}
+  cloud2: {<<: *hiddenicon, x: 2, y: 4, icon: "cloud", color: "black", 
+  text: "Internet", iconFill: "white" }
+  target1-hidden1: {<<: *hiddenicon, x: 8, y: 6, icon: "gateway", iconStroke: "none", color: "none"}
+  target1-system: {<<: *hiddenicon, x: 9, y: 6,  text: "Services", 
+  icon: "serverfarm", iconFill: "#708890"}
+  target1-hidden2: {<<: *hiddenicon, x: 10, y: 6, icon: "gateway", iconStroke: "none", color: "none"}
+  target2-hidden1: {<<: *hiddenicon, x: 8, y: 4, icon: "gateway", iconStroke: "none", color: "none"}
+  target2-system: {<<: *hiddenicon, x: 9, y: 4, text: "Services", 
+  icon: "serverfarm", iconFill: "#708890"}
+  target2-hidden2: {<<: *hiddenicon, x: 10, y: 4, icon: "gateway", iconStroke: "none", color: "none"}
+  
+
+
+
+  
+  
+group: &group
+  - { color: "white", stroke: "lightblue", fill: "white" }
+groups:
+  client-1: { <<: *group, name: " Client Primary Site", members: ["client1-vpn-peer", "client1-server"] }  
+  client-2: { <<: *group, name: "Client Secondary Site", members: ["client2-vpn-peer", "client2-server"] }  
+  sg-1: { <<: *group,  textLocation:  "topMiddle", name: "CER", members: ["sg-vpn-peer1-fw1", "sg-vpn-peer1-rtr1", "sg-vpn-peer1-fw2"] }  
+  sg-2: { <<: *group, textLocation: "topMiddle", name: " NJS", members: ["sg-vpn-peer2-fw1","sg-vpn-peer2-rtr1", "sg-vpn-peer2-fw2"] } 
+  sg-servers1: { <<: *group, textLocation: "topMiddle", name: "CER
+  10.3.0.0/16", text: "Services",  members: ["target1-system", "target1-hidden1", "target1-hidden2"] }  
+  sg-servers2: { <<: *group, textLocation: "topMiddle", name: "NJS
+  - 10.34.0.0/16", text: "Services",  members: ["target2-system", "target2-hidden1", "target2-hidden2"] }  
+  sgvpn1: { <<: *group, textLocation: "topMiddle", name: "SG PRM", members: [sg-1, sg-2, sg-servers1, sg-servers2], color: "black" }
+
+  
+connection: &connection
+  color: "purple"
+  stroke: "purple"
+  strokeDashArray: "10,2"
+  
+connections:
+    - { <<: *connection, endpoints: ["client1-vpn-peer", "sg-vpn-peer1-fw1"] }
+    - { <<: *connection, endpoints: ["client2-vpn-peer", "sg-vpn-peer2-fw1"] }
+    - { <<: *connection, endpoints: ["sg-vpn-peer1-fw2", "target1-system"], stroke: "#708090", strokeDashArray: 0 }
+    - { <<: *connection, endpoints: ["sg-vpn-peer2-fw2", "target2-system"], stroke: "#708090", strokeDashArray: 0 }
+    - { <<: *connection, endpoints: ["sg-vpn-peer1-fw1", "sg-vpn-peer1-fw2"], stroke: "#708090", strokeDashArray: 0 }
+    - { <<: *connection, endpoints: ["sg-vpn-peer2-fw1", "sg-vpn-peer2-fw2"], stroke: "#708090", strokeDashArray: 0 }
+    - { <<: *connection, endpoints: ["target1-system", "target2-system"], stroke: "#60A0A0", strokeDashArray: 0 }
+
+notes:
+ 0: { x: 0, y: 2, h: 2.4, w: 10.4, fill: "white", stroke: "#C0C0C0", alignItems: "stretch" }
+ 1: { x: 0, y: 2, xAlign: center, yAlign: center,  fill: "none", color: "#305050", stroke: "#C0C0C0", text: "#{{ vpn_param['client_name'] }} Connectivity to SG PRM", h: .9 , w: 10.4 }
+ 2: { x: 0, y: 2, xAlign: center, yAlign: bottom,  fill: "none", color: "#305050", stroke: "#C0C0C0", text: "#Connection Type: Site-to-Site VPN", h: 1.4 , w: 10.4 }
+ 3: { x: 0, y: 1, xAlign: center, yAlign: bottom,  fill: "none", color: "#305050", stroke: "#C0C0C0", text: "##Service", h: .7 , w: 2.4}
+ 4: { x: 2, y: 1, xAlign: center, yAlign: bottom,  fill: "none", color: "#305050", stroke: "#C0C0C0", text: "##Source IP {{ vpn_param['client_name'] }}", h: .7 , w: 2.4 }
+ 5: { x: 4, y: 1, xAlign: center, yAlign: bottom,  fill: "none", color: "#305050", stroke: "#C0C0C0", text: "##Target IP(New Edge)", h: .7 , w: 2.4 }
+ 6: { x: 6, y: 1, xAlign: center, yAlign: bottom,  fill: "none", color: "#305050", stroke: "#C0C0C0", text: "##Real IP(New Edge)", h: .7 , w: 2.4 }
+ 7: { x: 8, y: 1, xAlign: center, yAlign: bottom,  fill: "none", color: "#305050", stroke: "#C0C0C0", text: "##Port", h: .7 , w: 2.4 }
+
+ 8: { x: 0, y: 1, xAlign: center, yAlign: bottom,  fill: "none", color: "#305050", stroke: "#C0C0C0", text: "Primary to Client", h: 1 , w: 2.4}
+ 9: { x: 2, y: 1, xAlign: center, yAlign: bottom,  fill: "none", color: "#305050", stroke: "#C0C0C0", text: "{{ vpn_param['policies']['from_socgen'][0]['source_addr']['primary'][0]['real'] }}/32", h: 1 , w: 2.4 }
+ 10: { x: 4, y: 1, xAlign: center, yAlign: bottom,  fill: "none", color: "#305050", stroke: "#C0C0C0", text: "{{ vpn_param['policies']['from_socgen'][0]['dest_addr']['primary'][0]['nat'] }}", h: 1 , w: 2.4 }
+ 11: { x: 6, y: 1, xAlign: center, yAlign: bottom,  fill: "none", color: "#305050", stroke: "#C0C0C0", text: "{{ vpn_param['policies']['from_socgen'][0]['dest_addr']['primary'][0]['real'] }}", h: 1 , w: 2.4 }
+ 12: { x: 8, y: 1, xAlign: center, yAlign: bottom,  fill: "none", color: "#305050", stroke: "#C0C0C0", text: "{{ vpn_param['policies']['from_socgen'][0]['services'] | join(', ')}}", h: 1 , w: 2.4 }
+ 
+ 13: { x: 0, y: 1, xAlign: center, yAlign: bottom,  fill: "none", color: "#305050", stroke: "#C0C0C0", text: "Secondary to Client", h: 1.4 , w: 2.4}
+ 14: { x: 2, y: 1, xAlign: center, yAlign: bottom,  fill: "none", color: "#305050", stroke: "#C0C0C0", text: "{{ vpn_param['policies']['from_socgen'][0]['source_addr']['secondary'][0]['real'] }}/32", h: 1.4 , w: 2.4 }
+ 15: { x: 4, y: 1, xAlign: center, yAlign: bottom,  fill: "none", color: "#305050", stroke: "#C0C0C0", text: "{{ vpn_param['policies']['from_socgen'][0]['dest_addr']['secondary'][0]['nat'] }}", h: 1.4 , w: 2.4 }
+ 16: { x: 6, y: 1, xAlign: center, yAlign: bottom,  fill: "none", color: "#305050", stroke: "#C0C0C0", text: "{{ vpn_param['policies']['from_socgen'][0]['dest_addr']['secondary'][0]['real'] }}", h: 1.4 , w: 2.4 }
+ 17: { x: 8, y: 1, xAlign: center, yAlign: bottom,  fill: "none", color: "#305050", stroke: "#C0C0C0", text: "{{ vpn_param['policies']['from_socgen'][0]['services'] | join(', ')}}", h: 1.4 , w: 2.4}
+ 
+ 
+   
